@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'supportapp.apps.SupportappConfig',
+    'users',
     'rest_framework',
 ]
 
@@ -78,7 +79,7 @@ WSGI_APPLICATION = 'support.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django_db',
+        'NAME': 'django_db_users',
         'USER': 'root',
         'PASSWORD': 'rootroot',
         'HOST': '127.0.0.1',
@@ -129,3 +130,5 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.User'
