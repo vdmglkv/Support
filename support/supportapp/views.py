@@ -1,6 +1,7 @@
 import jwt
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
+from rest_framework.request import Request
 from rest_framework.response import Response
 from .serializers import TicketSerializer
 from .models import Ticket
@@ -8,7 +9,7 @@ from .models import Ticket
 
 class TicketView(APIView):
 
-    def get(self, request):
+    def get(self, request: Request) -> Response:
         token = request.COOKIES.get('jwt')
 
         if not token:
@@ -26,7 +27,7 @@ class TicketView(APIView):
         serializer = TicketSerializer(ticket, many=True)
         return Response(serializer.data)
 
-    def post(self, request):
+    def post(self, request: Request) -> Response:
         token = request.COOKIES.get('jwt')
 
         if not token:

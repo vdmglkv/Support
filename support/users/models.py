@@ -6,7 +6,7 @@ from django.contrib.auth.models import BaseUserManager
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, date_of_birth='2001-09-10', password=None):
+    def create_user(self, email: str, date_of_birth: str = '2001-09-10', password: str = None):
 
         if not email:
             raise ValueError('Users must have an email address')
@@ -20,7 +20,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, date_of_birth='2001-09-10', password=None):
+    def create_superuser(self, email: str, date_of_birth: str = '2001-09-10', password: str = None):
 
         user = self.create_user(
             email,
@@ -50,13 +50,13 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.email
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self, perm, obj=None) -> bool:
         return True
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, app_label) -> bool:
         return True
 
     @property
-    def is_staff(self):
+    def is_staff(self) -> bool:
         return self.is_admin
 

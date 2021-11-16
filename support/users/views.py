@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from .serializers import UserSerializer
+from rest_framework.request import Request
 from .models import User
 import jwt
 import datetime
@@ -10,7 +11,8 @@ import datetime
 
 class RegisterView(APIView):
 
-    def post(self, request):
+    def post(self, request: Request) -> Response:
+        print(type(request))
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -19,7 +21,7 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
 
-    def post(self, request):
+    def post(self, request: Request) -> Response:
         try:
             email = request.data['email']
             password = request.data['password']
@@ -38,6 +40,7 @@ class LoginView(APIView):
 
         payload = {
             'id': user.id,
+            'isStaff?': user.is_admin,
             'expire': str(datetime.datetime.utcnow() + datetime.timedelta(minutes=10)),
             'create': str(datetime.datetime.utcnow())
         }
@@ -56,7 +59,7 @@ class LoginView(APIView):
 
 class UserView(APIView):
 
-    def get(self, request):
+    def get(self, request: Request) -> Response:
         token = request.COOKIES.get('jwt')
 
         if not token:
@@ -73,7 +76,7 @@ class UserView(APIView):
 
 class LogoutView(APIView):
 
-    def post(self, request):
+    def post(self, request: Request) -> Response:
         response = Response()
         response.delete_cookie('jwt')
         response.data = {
