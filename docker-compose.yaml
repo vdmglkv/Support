@@ -5,11 +5,23 @@ services:
     image: redis
     restart: always
 
-  webapp:
+  postgres_db:
+    image: postgres:14.0-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=rootroot
+      - POSTGRES_DB=django_db_users
+    ports:
+      - "5432:5432"
+
+  django:
     restart: always
     build:
       context: ./
     ports:
       - "8000:8000"
+    depends_on:
+      - postgres_db
     command: [ "python3", "./support/manage.py", "runserver", "0.0.0.0:8000"]
 
