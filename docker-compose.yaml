@@ -23,5 +23,5 @@ services:
       - "8000:8000"
     depends_on:
       - postgres_db
-    command: [ "python3", "./support/manage.py", "runserver", "0.0.0.0:8000"]
+    command: bash -c "python ./support/manage.py migrate && python ./support/manage.py runserver 0.0.0.0:8000"
 
