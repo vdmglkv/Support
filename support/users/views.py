@@ -40,6 +40,7 @@ class LoginView(APIView):
 
         payload = {
             'id': user.id,
+            'email': user.email,
             'isStaff?': user.is_admin,
             'expire': str(datetime.datetime.utcnow() + datetime.timedelta(minutes=10)),
             'create': str(datetime.datetime.utcnow())

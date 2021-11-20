@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 
 # Create your models here.
+from rest_framework.fields import BooleanField
 
 
 class UserManager(BaseUserManager):
@@ -57,6 +58,6 @@ class User(AbstractBaseUser):
         return True
 
     @property
-    def is_staff(self) -> bool:
+    def is_staff(self) -> BooleanField:
         return self.is_admin
 
