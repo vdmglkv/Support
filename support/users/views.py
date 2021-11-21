@@ -12,7 +12,6 @@ import datetime
 class RegisterView(APIView):
 
     def post(self, request: Request) -> Response:
-        print(type(request))
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -52,7 +51,7 @@ class LoginView(APIView):
 
         response.set_cookie(key='jwt', value=token, httponly=True)
         response.data = {
-            'jwt': token
+            'message': "Successfully login"
         }
 
         return response

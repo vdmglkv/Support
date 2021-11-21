@@ -8,7 +8,8 @@ from .models import Ticket
 
 
 class TicketView(APIView):
-    def get(self, request: Request) -> Response:
+
+    def check_authentication(self, request: Request) -> dict:
         token = request.COOKIES.get('jwt')
 
         if not token:
@@ -18,6 +19,10 @@ class TicketView(APIView):
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
+        return payload
+
+    def get(self, request: Request) -> Response:
+        payload = self.check_authentication(request)
 
         if payload['isStaff?']:
             ticket = Ticket.objects.all()
@@ -29,15 +34,8 @@ class TicketView(APIView):
         return Response(serializer.data)
 
     def post(self, request: Request) -> Response:
-        token = request.COOKIES.get('jwt')
+        payload = self.check_authentication(request)
 
-        if not token:
-            raise AuthenticationFailed('Unauthenticated!')
-
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
         request.data['from_user'] = payload['email']
         if not payload['isStaff?'] and 'status' in request.data.keys():
             del request.data['status']
@@ -46,16 +44,9 @@ class TicketView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-    def patch(self, request):
-        token = request.COOKIES.get('jwt')
+    def patch(self, request: Request) -> Response:
 
-        if not token:
-            raise AuthenticationFailed('Unauthenticated!')
-
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
+        payload = self.check_authentication(request)
 
         if payload['isStaff?']:
             ticket = Ticket.objects.get(id=request.data['id'])
@@ -71,7 +62,3 @@ class TicketView(APIView):
         return Response({
             'message': 'success'
         })
-
-
-
-
