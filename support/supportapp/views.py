@@ -5,6 +5,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from .serializers import TicketSerializer
 from .models import Ticket
+from django.db.utils import DataError
+from django.db.models import ObjectDoesNotExist
 
 
 class TicketView(APIView):
@@ -37,8 +39,14 @@ class TicketView(APIView):
         payload = self.check_authentification(request)
 
         request.data['from_user'] = payload['email']
-        if not payload['isStaff?'] and 'status' in request.data.keys():
-            del request.data['status']
+        forbidden = ['status', 'support_answer']
+        if not payload['isStaff?']:
+            for req in forbidden:
+                try:
+                    del request.data[req]
+                except KeyError:
+                    pass
+
         serializer = TicketSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -49,15 +57,43 @@ class TicketView(APIView):
         payload = self.check_authentification(request)
 
         if payload['isStaff?']:
-            ticket = Ticket.objects.get(id=request.data['id'])
-            ticket.status = request.data.get('status', ticket.status)
-            ticket.answer = request.data.get('answer', ticket.answer)
-            ticket.save()
+            try:
+                ticket = Ticket.objects.get(id=request.data['id'])
+                ticket.status = request.data.get('status', ticket.status)
+                ticket.support_answer = request.data.get('support_answer', ticket.support_answer)
+                ticket.save()
+            except KeyError:
+                return Response({
+                    'message': 'Ticket id excepted'
+                })
+            except DataError:
+                return Response({
+                    'message': 'Input error'
+                })
+            except ObjectDoesNotExist:
+                return Response({
+                    'message': 'No any ticket to update!'
+                })
 
         else:
-            ticket = Ticket.objects.get(id=request.data['id'])
-            ticket.answer = request.data.get('answer', ticket.answer)
-            ticket.save()
+            try:
+                ticket = Ticket.objects.get(id=request.data['id'], from_user=payload['email'])
+                ticket.user_answer = request.data.get('user_answer', ticket.user_answer)
+                ticket.save()
+            except KeyError:
+                return Response({
+                    'message': 'Ticket id excepted'
+                })
+
+            except DataError:
+                return Response({
+                    'message': 'Input error'
+                })
+
+            except ObjectDoesNotExist:
+                return Response({
+                    'message': 'No any ticket to update!'
+                })
 
         return Response({
             'message': 'success'

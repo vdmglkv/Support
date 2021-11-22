@@ -32,7 +32,8 @@ class TicketTest(TestCase):
         self.assertEqual(self.ticket.title, 'Test')
         self.assertEqual(self.ticket.description, 'TestDesc')
         self.assertEqual(self.ticket.from_user, 'Vadim@gmail.com')
-        self.assertEqual(self.ticket.answer, 'None')
+        self.assertEqual(self.ticket.support_answer, 'None')
+        self.assertEqual(self.ticket.user_answer, 'None')
         self.assertEqual(self.ticket.status, 'Unresolved')
 
     def test_fill_user_fields(self):
