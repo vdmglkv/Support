@@ -61,19 +61,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ]
-# }
-REST_FRAMEWORK = {
-   'DEFAULT_AUTHENTICATION_CLASSES': (
-       'rest_framework.authentication.TokenAuthentication',
-   ),
-   # 'DEFAULT_PERMISSION_CLASSES': (
-   #      'rest_framework.permissions.IsAdminUser',
-   # ),
-}
 
 ROOT_URLCONF = 'support.urls'
 
@@ -105,7 +92,7 @@ DATABASES = {
         'NAME': 'django_db_users',
         'USER': 'root',
         'PASSWORD': 'rootroot',
-        'HOST': 'postgres_db',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -135,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Minsk'
 
 USE_I18N = True
 

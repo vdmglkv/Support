@@ -9,7 +9,7 @@ from .models import Ticket
 
 class TicketView(APIView):
 
-    def check_authentication(self, request: Request) -> dict:
+    def check_authentification(self, request: Request) -> dict:
         token = request.COOKIES.get('jwt')
 
         if not token:
@@ -22,7 +22,7 @@ class TicketView(APIView):
         return payload
 
     def get(self, request: Request) -> Response:
-        payload = self.check_authentication(request)
+        payload = self.check_authentification(request)
 
         if payload['isStaff?']:
             ticket = Ticket.objects.all()
@@ -34,7 +34,7 @@ class TicketView(APIView):
         return Response(serializer.data)
 
     def post(self, request: Request) -> Response:
-        payload = self.check_authentication(request)
+        payload = self.check_authentification(request)
 
         request.data['from_user'] = payload['email']
         if not payload['isStaff?'] and 'status' in request.data.keys():
@@ -46,7 +46,7 @@ class TicketView(APIView):
 
     def patch(self, request: Request) -> Response:
 
-        payload = self.check_authentication(request)
+        payload = self.check_authentification(request)
 
         if payload['isStaff?']:
             ticket = Ticket.objects.get(id=request.data['id'])
