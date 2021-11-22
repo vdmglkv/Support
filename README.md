@@ -226,3 +226,13 @@ And now you can run the API server from the docker container
             {
                 "message": "success"
             }
+
+
+# Testing
+
+- Django tests
+> python manage.py test
+
+- Manual testing
+
+I will recommend to use a [postman](https://www.postman.com/)  application.
