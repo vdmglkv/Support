@@ -127,7 +127,8 @@ And now you can run the API server from the docker container
             "description": "TestDesc",
             "date": "2021-11-21T14:26:12.618302+03:00",
             "from_user": "Vadim@gmail.com",
-            "answer": "None",
+            "support_answer": "None",
+            "user_answer": "None",
             "status": "Unresolved"
         }
 
@@ -148,7 +149,8 @@ And now you can run the API server from the docker container
             "description": "TestDesc",
             "date": "2021-11-21T14:26:12.618302+03:00",
             "from_user": "Vadim@gmail.com",
-            "answer": "None",
+            "support_answer": "None",
+            "user_answer": "None",
             "status": "Unresolved"
         }
     ]
@@ -161,7 +163,8 @@ And now you can run the API server from the docker container
             "description": "TestDesc",
             "date": "2021-11-21T14:26:12.618302+03:00",
             "from_user": "Vadim@gmail.com",
-            "answer": "None",
+            "support_answer": "None",
+            "user_answer": "None",
             "status": "Unresolved"
         },
 
@@ -171,7 +174,8 @@ And now you can run the API server from the docker container
             "description": "test",
             "date": "2021-11-20T20:56:30.015249+03:00",
             "from_user": "Vadimka@gmail.com",
-            "answer": "None",
+            "support_answer": "None",
+            "user_answer": "None",
             "status": "Unresolved"
         },
 
@@ -181,7 +185,8 @@ And now you can run the API server from the docker container
             "description": "test1",
             "date": "2021-11-20T21:00:22.816048+03:00",
             "from_user": "test@gmail.com",
-            "answer": "None",
+            "support_answer": "None",
+            "user_answer": "None",
             "status": "Unresolved"
         },
 
@@ -191,7 +196,8 @@ And now you can run the API server from the docker container
             "description": "test1",
             "date": "2021-11-20T20:59:57.325752+03:00",
             "from_user": "test@gmail.com",
-            "answer": "None",
+            "support_answer": "None",
+            "user_answer": "None",
             "status": "Unresolved"
         }
     ]
@@ -206,7 +212,7 @@ And now you can run the API server from the docker container
         Example:
             {
                 "id": "1",
-                "answer": "Just reboot",
+                "support_answer": "Just reboot",
                 "status": "Resolved"
             }
     It will return a message:
@@ -219,7 +225,7 @@ And now you can run the API server from the docker container
         Example:
             {
                 "id": "1",
-                "answer": "Thanks a lot"
+                "user_answer": "Thanks a lot"
             }
     It will return:
         Example:
@@ -235,4 +241,4 @@ And now you can run the API server from the docker container
 
 - Manual testing
 
-I will recommend to use a [postman](https://www.postman.com/)  application.
+I will recommend using a [postman](https://www.postman.com/)  application.
