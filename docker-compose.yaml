@@ -23,5 +23,13 @@ services:
       - "8000:8000"
     depends_on:
       - postgres_db
-    command: bash -c "python ./support/manage.py migrate && python ./support/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python ./support/manage.py makemigrations && python ./support/manage.py migrate && python ./support/manage.py runserver 0.0.0.0:8000"
+
+#  worker:
+#    restart: always
+#    build:
+#      context: ./
+#    volumes:
+#      - ./
+#    command: ["celery", "--workdir=./support", "-A", "./support", "worker"]
 
