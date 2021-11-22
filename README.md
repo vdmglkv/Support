@@ -19,12 +19,26 @@ API for the support service.
 
 ---
 # Installation
+# Docker:
 - Clone the repo
 >git clone https://github.com/vdmglkv/Support.git -b develop
 - In the directory **with docker-compose.yaml**
 >docker-compose up --build
 
 And now you can run the API server from the docker container
+
+# Without docker:
+- Clone the repo
+>git clone https://github.com/vdmglkv/Support.git -b develop
+- In the directory **with settings.py** add **your** database configuration
+- Add migrations in your db:
+
+[Windows]
+>python manage.py makemigrations && python manage.py migrate
+
+[Linux/Mac OS]
+>python3 manage.py makemigrations && python3 manage.py migrate
+
 
 ---
 # Usage
