@@ -43,4 +43,4 @@ class TicketTest(TestCase):
     def test_unauthorized_response(self):
         client = Client()
         response = client.get('/api/ticket/')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
