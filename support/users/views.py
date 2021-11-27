@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import UserSerializer
+from users.serializers import UserSerializer
 from rest_framework.request import Request
-from .models import User
+from users.models import User
 import jwt
 import datetime
 

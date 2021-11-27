@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .views import TicketView
+from supportapp.views import TicketView
 from django.urls import path, include
 
 router = routers.DefaultRouter()

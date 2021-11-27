@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from .models import Ticket
+from supportapp.models import Ticket
 from django.contrib.auth import get_user_model
 import jwt
 import datetime

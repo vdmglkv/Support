@@ -3,8 +3,8 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
-from .serializers import TicketSerializer
-from .models import Ticket
+from supportapp.serializers import TicketSerializer
+from supportapp.models import Ticket
 from django.db.utils import DataError
 from django.db.models import ObjectDoesNotExist
 

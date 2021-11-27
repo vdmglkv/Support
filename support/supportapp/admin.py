@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Ticket
+from supportapp.models import Ticket
 
 
 class TicketAdmin(admin.ModelAdmin):

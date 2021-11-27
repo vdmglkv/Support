@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Ticket
+from supportapp.models import Ticket
 
 
 class TicketSerializer(serializers.ModelSerializer):
