@@ -6,7 +6,6 @@ from rest_framework.request import Request
 from .models import User
 import jwt
 import datetime
-# Create your views here.
 
 
 class RegisterView(APIView):

@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
-
-# Create your models here.
 from rest_framework.fields import BooleanField
 
 
