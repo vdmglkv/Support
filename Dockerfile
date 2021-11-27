@@ -1,6 +1,7 @@
 FROM python:3.9
 RUN apt-get update -y
 RUN apt-get upgrade -y
+RUN apt install -y netcat
 
 WORKDIR /app
 
@@ -10,6 +11,11 @@ ENV PYTHONUNBUFFERED 1
 
 COPY support/requirements.txt ./
 RUN pip install -r requirements.txt
+
+COPY ./support/entrypoint.sh .
+
 COPY support support
 
-CMD [ "python3", "./suport/manage.py", "runserver", "0.0.0.0:8000"]
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
