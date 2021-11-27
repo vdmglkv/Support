@@ -1,5 +1,10 @@
 from pathlib import Path
+from os.path import join, dirname
+from dotenv import load_dotenv
 import os
+
+dotenv_path = join(dirname(__file__), 'support/support/.env')
+load_dotenv(dotenv_path)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
