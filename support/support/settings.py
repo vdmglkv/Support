@@ -3,7 +3,7 @@ from os.path import join, dirname
 from dotenv import load_dotenv
 import os
 
-dotenv_path = join(dirname(__file__), 'support/support/.env')
+dotenv_path = join(dirname(__file__), '../../.env')
 load_dotenv(dotenv_path)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +35,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'supportapp.middleware.CheckAuthentication'
 ]
 
 ROOT_URLCONF = 'support.urls'

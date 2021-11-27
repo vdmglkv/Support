@@ -1,5 +1,4 @@
 import jwt
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -11,20 +10,10 @@ from django.db.models import ObjectDoesNotExist
 
 class TicketView(APIView):
 
-    def check_authentification(self, request: Request) -> dict:
-        token = request.COOKIES.get('jwt')
-
-        if not token:
-            raise AuthenticationFailed('Unauthenticated!')
-
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
-        return payload
-
     def get(self, request: Request) -> Response:
-        payload = self.check_authentification(request)
+
+        token = request.COOKIES.get('jwt')
+        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
 
         if payload['isStaff?']:
             ticket = Ticket.objects.all()
@@ -36,7 +25,9 @@ class TicketView(APIView):
         return Response(serializer.data)
 
     def post(self, request: Request) -> Response:
-        payload = self.check_authentification(request)
+
+        token = request.COOKIES.get('jwt')
+        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
 
         request.data['from_user'] = payload['email']
         forbidden = ['status', 'support_answer']
@@ -54,7 +45,8 @@ class TicketView(APIView):
 
     def patch(self, request: Request) -> Response:
 
-        payload = self.check_authentification(request)
+        token = request.COOKIES.get('jwt')
+        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
 
         if payload['isStaff?']:
             try:
