@@ -22,16 +22,15 @@ API for the support service.
 
 - Add your **.env** file in the root directory with a similar structure:
 
-
-    DEBUG = 1
-    SECRET_KEY = your_key
-    SQL_ENGINE = your_DBMS_engine
-    SQL_DATABASE = your_db
-    SQL_USER = your_user
-    SQL_PASSWORD = your_password
-    SQL_HOST = your_host
-    SQL_PORT = your_port
-    DATABASE = your_DBMS
+        DEBUG = 1
+        SECRET_KEY = your_key
+        SQL_ENGINE = your_DBMS_engine
+        SQL_DATABASE = your_db
+        SQL_USER = your_user
+        SQL_PASSWORD = your_password
+        SQL_HOST = your_host
+        SQL_PORT = your_port
+        DATABASE = your_DBMS
 
 # Docker:
 - Clone the repo
