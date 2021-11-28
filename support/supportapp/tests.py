@@ -1,5 +1,4 @@
-import json
-
+from django.conf import settings
 from django.test import TestCase, Client
 from supportapp.models import Ticket
 from django.contrib.auth import get_user_model
@@ -24,8 +23,8 @@ class TicketTest(TestCase):
             'expire': str(datetime.datetime.utcnow() + datetime.timedelta(minutes=10)),
             'create': str(datetime.datetime.utcnow())
         }
-        self.token = jwt.encode(self.payload, 'secret', algorithm='HS256')
-        self.cookies = jwt.decode(self.token, 'secret', algorithms=['HS256'])
+        self.token = jwt.encode(self.payload, settings.SECRET_KEY, algorithm='HS256')
+        self.cookies = jwt.decode(self.token, settings.SECRET_KEY, algorithms=['HS256'])
 
     def test_instance_ticket(self):
         self.assertIsInstance(self.ticket, Ticket)

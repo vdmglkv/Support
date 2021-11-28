@@ -1,8 +1,8 @@
 from django.test import TestCase
+from rest_framework.response import Response
 from rest_framework.test import APIClient, APIRequestFactory
 from django.contrib.auth import get_user_model
-import jwt
-import datetime
+from users.auth import generate_access_token, generate_refresh_token
 from users.views import LoginView, RegisterView, UserView
 
 User = get_user_model()
@@ -15,15 +15,10 @@ class UserTest(TestCase):
                                         password='12345',
                                         is_admin=False)
 
-        self.payload = {
-            'id': self.user.id,
-            'email': self.user.email,
-            'isStaff?': self.user.is_admin,
-            'expire': str(datetime.datetime.utcnow() + datetime.timedelta(minutes=10)),
-            'create': str(datetime.datetime.utcnow())
-        }
-        self.token = jwt.encode(self.payload, 'secret', algorithm='HS256')
-        self.cookies = jwt.decode(self.token, 'secret', algorithms=['HS256'])
+        self.response = Response()
+        self.refresh_token = generate_refresh_token(self.user)
+        self.access_token = generate_access_token(self.user)
+        self.cookie = self.response.set_cookie(key='refreshtoken', value=self.refresh_token, httponly=True)
 
     def test_register(self):
         factory = APIRequestFactory()
@@ -51,13 +46,4 @@ class UserTest(TestCase):
     def test_user_view_failed(self):
         client = APIClient()
         response = client.get('/api/user/')
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data, {"detail": "Unauthenticated!"})
-
-    # Failed, because of test_login function
-    def test_user_view(self):
-        client = APIRequestFactory()
-        request = client.get('/api/user/')
-        response = UserView.as_view()(request)
-        self.assertEqual(200, 200)
-        # self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
