@@ -6,14 +6,15 @@ from supportapp.serializers import TicketSerializer
 from supportapp.models import Ticket
 from django.db.utils import DataError
 from django.db.models import ObjectDoesNotExist
+from django.conf import settings
 
 
 class TicketView(APIView):
 
     def get(self, request: Request) -> Response:
 
-        token = request.COOKIES.get('jwt')
-        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        token = request.COOKIES.get('refreshtoken')
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
         if payload['isStaff?']:
             ticket = Ticket.objects.all()
@@ -26,8 +27,8 @@ class TicketView(APIView):
 
     def post(self, request: Request) -> Response:
 
-        token = request.COOKIES.get('jwt')
-        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        token = request.COOKIES.get('refreshtoken')
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
         request.data['from_user'] = payload['email']
         forbidden = ['status', 'support_answer']
@@ -45,8 +46,8 @@ class TicketView(APIView):
 
     def patch(self, request: Request) -> Response:
 
-        token = request.COOKIES.get('jwt')
-        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        token = request.COOKIES.get('refreshtoken')
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
         if payload['isStaff?']:
             try:

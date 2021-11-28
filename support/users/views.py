@@ -4,8 +4,9 @@ from rest_framework.exceptions import AuthenticationFailed
 from users.serializers import UserSerializer
 from rest_framework.request import Request
 from users.models import User
+from django.conf import settings
+from users.auth import generate_access_token, generate_refresh_token
 import jwt
-import datetime
 
 
 class RegisterView(APIView):
@@ -36,20 +37,14 @@ class LoginView(APIView):
         if not user.check_password(password):
             raise AuthenticationFailed('Incorrect password')
 
-        payload = {
-            'id': user.id,
-            'email': user.email,
-            'isStaff?': user.is_admin,
-            'expire': str(datetime.datetime.utcnow() + datetime.timedelta(minutes=10)),
-            'create': str(datetime.datetime.utcnow())
-        }
-
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        access_token = generate_access_token(user)
+        refresh_token = generate_refresh_token(user)
 
         response = Response()
+        response.set_cookie(key='refreshtoken', value=refresh_token, httponly=True)
 
-        response.set_cookie(key='jwt', value=token, httponly=True)
         response.data = {
+            'access_token': access_token,
             'message': "Successfully login"
         }
 
@@ -59,15 +54,9 @@ class LoginView(APIView):
 class UserView(APIView):
 
     def get(self, request: Request) -> Response:
-        token = request.COOKIES.get('jwt')
+        token = request.COOKIES.get('refreshtoken')
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
-        if not token:
-            raise AuthenticationFailed('Unauthenticated!')
-
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
         user = User.objects.filter(id=payload['id']).first()
         serializer = UserSerializer(user)
         return Response(serializer.data)
@@ -77,7 +66,7 @@ class LogoutView(APIView):
 
     def post(self, request: Request) -> Response:
         response = Response()
-        response.delete_cookie('jwt')
+        response.delete_cookie('refreshtoken')
         response.data = {
             'message': 'success'
         }
