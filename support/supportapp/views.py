@@ -1,4 +1,6 @@
 import jwt
+from rest_framework import viewsets
+from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -9,9 +11,13 @@ from django.db.models import ObjectDoesNotExist
 from django.conf import settings
 
 
-class TicketView(APIView):
+class TicketViewSet(viewsets.ModelViewSet):
+    serializer_class = TicketSerializer
 
-    def get(self, request: Request) -> Response:
+    def get_queryset(self):
+        return Ticket.objects.all()
+
+    def list(self, request, *args, **kwargs):
 
         token = request.COOKIES.get('refreshtoken')
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
@@ -24,27 +30,47 @@ class TicketView(APIView):
         tickets = Ticket.objects.filter(from_user=payload['email'])
         serializer = TicketSerializer(tickets, many=True)
         return Response(serializer.data)
+        # return super(TicketViewSet, self).list(request, *args, **kwargs)
 
-    def post(self, request: Request) -> Response:
+    def create(self, request, *args, **kwargs):
 
         token = request.COOKIES.get('refreshtoken')
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
-        request.data['from_user'] = payload['email']
-        forbidden = ['status', 'support_answer']
-        if not payload['isStaff?']:
-            for req in forbidden:
-                try:
-                    del request.data[req]
-                except KeyError:
-                    pass
+        ticket = Ticket.objects.create(title=request.data['title'],
+                                       description=request.data['description'],
+                                       from_user=request.user)
 
-        serializer = TicketSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        ticket.save()
+
+        serializer = TicketSerializer(ticket)
+
         return Response(serializer.data)
+        # return super(TicketViewSet, self).create(request, *args, **kwargs)
 
-    def patch(self, request: Request) -> Response:
+    def retrieve(self, request, *args, **kwargs):
+
+        token = request.COOKIES.get('refreshtoken')
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+
+        return super(TicketViewSet, self).retrieve(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+
+        token = request.COOKIES.get('refreshtoken')
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+
+        if payload['isStaff?']:
+            ticket = self.get_object()
+            ticket.delete()
+            response_message = {"message": "Item has been deleted"}
+        else:
+            response_message = {"message": "Not Allowed"}
+
+        return Response(response_message)
+        # return super(TicketViewSet, self).destroy(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
 
         token = request.COOKIES.get('refreshtoken')
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
