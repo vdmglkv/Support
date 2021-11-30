@@ -1,8 +1,6 @@
 import jwt
 from rest_framework import viewsets
 from rest_framework.generics import get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.request import Request
 from rest_framework.response import Response
 from supportapp.serializers import TicketSerializer
 from supportapp.models import Ticket
@@ -30,61 +28,65 @@ class TicketViewSet(viewsets.ModelViewSet):
         tickets = Ticket.objects.filter(from_user=payload['email'])
         serializer = TicketSerializer(tickets, many=True)
         return Response(serializer.data)
-        # return super(TicketViewSet, self).list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
 
         token = request.COOKIES.get('refreshtoken')
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
-        ticket = Ticket.objects.create(title=request.data['title'],
-                                       description=request.data['description'],
-                                       from_user=request.user)
+        try:
+            ticket = Ticket.objects.create(title=request.data['title'],
+                                           description=request.data['description'],
+                                           from_user=payload['email'])
+        except KeyError:
+            return Response({
+                'message': 'Title and description excepted!'
+            })
 
         ticket.save()
 
         serializer = TicketSerializer(ticket)
 
         return Response(serializer.data)
-        # return super(TicketViewSet, self).create(request, *args, **kwargs)
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request, pk=None, *args, **kwargs):
 
         token = request.COOKIES.get('refreshtoken')
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        if payload['isStaff?']:
+            return super(TicketViewSet, self).retrieve(request, *args, **kwargs)
 
-        return super(TicketViewSet, self).retrieve(request, *args, **kwargs)
+        ticket = get_object_or_404(self.get_queryset(), pk=pk, from_user=payload['email'])
+        serializer = TicketSerializer(ticket)
+        return Response(serializer.data)
 
-    def destroy(self, request, *args, **kwargs):
+    def destroy(self, request, pk=None, *args, **kwargs):
 
         token = request.COOKIES.get('refreshtoken')
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
         if payload['isStaff?']:
-            ticket = self.get_object()
+
+            ticket = Ticket.objects.filter(id=pk).first()
             ticket.delete()
+
             response_message = {"message": "Item has been deleted"}
         else:
             response_message = {"message": "Not Allowed"}
 
         return Response(response_message)
-        # return super(TicketViewSet, self).destroy(request, *args, **kwargs)
 
-    def update(self, request, *args, **kwargs):
+    def update(self, request, pk=None, *args, **kwargs):
 
         token = request.COOKIES.get('refreshtoken')
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
         if payload['isStaff?']:
             try:
-                ticket = Ticket.objects.get(id=request.data['id'])
+                ticket = Ticket.objects.get(id=pk)
                 ticket.status = request.data.get('status', ticket.status)
                 ticket.support_answer = request.data.get('support_answer', ticket.support_answer)
                 ticket.save()
-            except KeyError:
-                return Response({
-                    'message': 'Ticket id excepted'
-                })
             except DataError:
                 return Response({
                     'message': 'Input error'
@@ -96,14 +98,11 @@ class TicketViewSet(viewsets.ModelViewSet):
 
         else:
             try:
-                ticket = Ticket.objects.get(id=request.data['id'], from_user=payload['email'])
+                ticket = Ticket.objects.get(id=pk, from_user=payload['email'])
+                ticket.title = request.data.get('title', ticket.title)
+                ticket.description = request.data.get('description', ticket.description)
                 ticket.user_answer = request.data.get('user_answer', ticket.user_answer)
                 ticket.save()
-            except KeyError:
-                return Response({
-                    'message': 'Ticket id excepted'
-                })
-
             except DataError:
                 return Response({
                     'message': 'Input error'

@@ -4,7 +4,7 @@ from supportapp.choices import StatusChoice
 
 class Ticket(models.Model):
     title = models.CharField(max_length=150)
-    description = models.CharField(max_length=300, blank=True)
+    description = models.CharField(max_length=300)
     date = models.DateTimeField(auto_now_add=True)
     from_user = models.CharField(max_length=255, default="Unknown")
     support_answer = models.CharField(max_length=255, default='None')
