@@ -129,7 +129,7 @@ And now you can run the API server from the docker container
         Example:
         {
             "title": "TestTitle",
-            "description": "TestDesc" [optional]
+            "description": "TestDesc"
         }
 
     And it return:
@@ -215,16 +215,57 @@ And now you can run the API server from the docker container
         }
     ]
 
+# Retrieve a single ticket:
+
+    [api-url]: http://localhost:8000/api/ticket/{id}
+    [WARNING]: You should to be authorized!
+    You should send a get request without data.
+
+    If you are an admin, you can retrive any ticket.
+        Example :
+        [api-url]: http://localhost:8000/api/ticket/1/
+
+    It will return:
+        Example:
+            [
+        {
+            "id": 1,
+            "title": "TestTitle",
+            "description": "TestDesc",
+            "date": "2021-11-21T14:26:12.618302+03:00",
+            "from_user": "Vadim@gmail.com",
+            "support_answer": "None",
+            "user_answer": "None",
+            "status": "Unresolved"
+        }
+    ]
+
+    Else if you are a user, you can retrive only your ticket.
+    
+    If you try to retrive a non - existent ticket id, request will 
+    return to you an error:
+    
+      Example:
+      [api-url]: http://localhost:8000/api/ticket/3243728943289
+      
+      It will return:
+      {
+          "detail": "Not found."
+      }
+      
+
+
+
+
 # Update ticket:
 
-    [api-url]: http://localhost:8000/api/ticket/
+    [api-url]: http://localhost:8000/api/ticket/{id}
     [WARNING]: You should to be authorized!
-    You should send a patch request with data in json format.
+    You should send a put/patch request with data in json format.
 
     If you are an admin, you can add answer to any ticket and update their status.
         Example:
             {
-                "id": "1",
                 "support_answer": "Just reboot",
                 "status": "Resolved"
             }
@@ -234,10 +275,12 @@ And now you can run the API server from the docker container
                 "message": "success"
             }
 
-    Else if you are a user, you can add only your answer.
+    Else if you are a user, you can add only your answer and update
+    your ticket's title or description.
         Example:
             {
-                "id": "1",
+                "title": "Test",
+                "description": "TestDesc",
                 "user_answer": "Thanks a lot"
             }
     It will return:
@@ -246,6 +289,28 @@ And now you can run the API server from the docker container
                 "message": "success"
             }
 
+
+# Delete ticket:
+
+    [api-url]: http://localhost:8000/api/ticket/{id}
+    [WARNING]: You should to be authorized!
+    You should send a delete request without data.
+
+    Only admin can delete a ticket
+        Example:
+        http://localhost:8000/api/ticket/1/
+
+    It will return a message:
+        Example:
+            {
+                "message": "Item has been deleted"
+            }
+
+    If you are a user, request will return:.
+        Example:
+            {
+                "message": "Not Allowed"
+            }
 
 # Testing
 
