@@ -44,7 +44,6 @@ class LoginView(APIView):
         response.set_cookie(key='refreshtoken', value=refresh_token, httponly=True)
 
         response.data = {
-            'access_token': access_token,
             'message': "Successfully login"
         }
 
